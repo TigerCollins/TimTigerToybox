@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 trackSelection = true
 fetchPreview = true
 wantsMore = false
@@ -51,3 +52,6 @@ searchItemFavorites = [
 ]
 savedSearchesSortOrder = 0
 showSavedSearchPanel = false
+=======
+{}
+>>>>>>> 43242b8533020a417c6eb79e545a55448fab8560

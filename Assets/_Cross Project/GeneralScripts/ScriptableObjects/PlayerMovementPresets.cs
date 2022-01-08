@@ -16,6 +16,8 @@ public class PlayerMovementPresets : ScriptableObject
     }
 
     [SerializeField]
+    GlobalHelper.Perspective perspective;
+    [SerializeField]
     MoveAxis horizontalAxis;
     [SerializeField]
     MoveAxis verticalAxis;
@@ -27,5 +29,13 @@ public class PlayerMovementPresets : ScriptableObject
     public MoveAxis GetVerticalAxis()
     {
         return verticalAxis;
+    }
+
+    public GlobalHelper.Perspective PresetPerspective
+    {
+        get
+        {
+            return perspective;
+        }
     }
 }

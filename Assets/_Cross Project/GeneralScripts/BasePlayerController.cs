@@ -5,12 +5,14 @@ using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(CapsuleCollider))]
+[RequireComponent(typeof(Rigidbody))]
 public class BasePlayerController : MonoBehaviour
 {
     [SerializeField]
     MiniGameStats currentMinigameStats;
     [SerializeField]
     PlayerMovementPresets movementPreset;
+    public float movementSpeed;
     [SerializeField]
     Interactable raycastInteractable;
     [SerializeField]
@@ -25,7 +27,8 @@ public class BasePlayerController : MonoBehaviour
 
     public void BaseInit()
     {
-
+        movementInformation.perspective = movementPreset.PresetPerspective;
+        movementInformation.events.onPerspectiveChange.AddListener(delegate { SetMovementPreset(movementInformation.perspective); });
     }
 
     public void AttemptInteraction()
@@ -48,7 +51,8 @@ public class BasePlayerController : MonoBehaviour
 
     void Movement()
     {
-
+        Vector3 input = MovementDirection(movementInformation.currentMovementVector.x, movementInformation.currentMovementVector.y);
+        movementInformation.rb.MovePosition(transform.position + input * Time.deltaTime * movementSpeed);
     }
 
     void Raycast()
@@ -106,57 +110,85 @@ public class BasePlayerController : MonoBehaviour
         currentMinigameStats = stats;
     }
 
-    public void BasicMovement(InputAction.CallbackContext context)
+    public void UpdateMovement(InputAction.CallbackContext context)
     {
         movementInformation.currentMovementVector = context.ReadValue<Vector2>();
-
-        if(movementPreset != null)
-        {
-            HorizontalInput(movementInformation.currentMovementVector.x);
-            VerticalInput(movementInformation.currentMovementVector.y);
-        }
     }
 
-    void HorizontalInput(float xValue)
+    Vector3 MovementDirection(float xValue,  float yValue)
     {
+        float x = 0;
+        float y = 0;
+        float z = 0;
         switch (movementPreset.GetHorizontalAxis())
         {
             case PlayerMovementPresets.MoveAxis.x:
+                x = xValue;
                 break;
             case PlayerMovementPresets.MoveAxis.y:
+                y = xValue;
                 break;
             case PlayerMovementPresets.MoveAxis.z:
+                z = xValue;
                 break;
             case PlayerMovementPresets.MoveAxis.cameraRelativeHorizontal:
                 break;
             case PlayerMovementPresets.MoveAxis.cameraRelativeForward:
                 break;
             case PlayerMovementPresets.MoveAxis.nothing:
+
+                break;
+            default:
+                break;
+        }
+
+        switch (movementPreset.GetVerticalAxis())
+        {
+            case PlayerMovementPresets.MoveAxis.x:
+                x = yValue;
+                break;
+            case PlayerMovementPresets.MoveAxis.y:
+                y = yValue;
+                break;
+            case PlayerMovementPresets.MoveAxis.z:
+                z = yValue;
+                break;
+            case PlayerMovementPresets.MoveAxis.cameraRelativeHorizontal:
+                break;
+            case PlayerMovementPresets.MoveAxis.cameraRelativeForward:
+                break;
+            case PlayerMovementPresets.MoveAxis.nothing:
+                break;
+            default:
+                break;
+        }
+        return new Vector3(x,y,z);
+    }
+
+    public void SetMovementPreset(GlobalHelper.Perspective perspective)
+    {
+        switch (perspective)
+        {
+            case GlobalHelper.Perspective.firstPerson:
+                movementPreset = movementInformation.movementPresets.firstPerson;
+                break;
+            case GlobalHelper.Perspective.thirdPerson:
+                movementPreset = movementInformation.movementPresets.thirdPerson;
+                break;
+            case GlobalHelper.Perspective.sideScroller:
+                movementPreset = movementInformation.movementPresets.sideScroller;
+                break;
+            case GlobalHelper.Perspective.topDown:
+                movementPreset = movementInformation.movementPresets.topdown;
                 break;
             default:
                 break;
         }
     }
 
-    void VerticalInput(float yValue)
+    public void ChangeMoveVectors()
     {
-        switch (movementPreset.GetVerticalAxis())
-        {
-            case PlayerMovementPresets.MoveAxis.x:
-                break;
-            case PlayerMovementPresets.MoveAxis.y:
-                break;
-            case PlayerMovementPresets.MoveAxis.z:
-                break;
-            case PlayerMovementPresets.MoveAxis.cameraRelativeHorizontal:
-                break;
-            case PlayerMovementPresets.MoveAxis.cameraRelativeForward:
-                break;
-            case PlayerMovementPresets.MoveAxis.nothing:
-                break;
-            default:
-                break;
-        }
+
     }
 
     //PHYSICS EVENTS
@@ -269,7 +301,7 @@ public class Movement
         }
     }
 
-
+  
 
 }
 
