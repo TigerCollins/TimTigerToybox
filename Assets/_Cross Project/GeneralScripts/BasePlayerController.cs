@@ -8,21 +8,14 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(Rigidbody))]
 public class BasePlayerController : MonoBehaviour
 {
-    [SerializeField]
-    MiniGameStats currentMinigameStats;
-    [SerializeField]
-    PlayerMovementPresets movementPreset;
+    [SerializeField] MiniGameStats currentMinigameStats;
+    [SerializeField] PlayerMovementPresets movementPreset;
     public float movementSpeed;
-    [SerializeField]
-    Interactable raycastInteractable;
-    [SerializeField]
-    Interactable physicsInteractable;
-    [SerializeField]
-    RaycastInformation raycastInformation;
-    [SerializeField]
-    Movement movementInformation;
-    [SerializeField]
-    PhysicsEvents physicsEvents;
+    [SerializeField] Interactable raycastInteractable;
+    [SerializeField] Interactable physicsInteractable;
+    [SerializeField] RaycastInformation raycastInformation;
+    [SerializeField] Movement movementInformation;
+    [SerializeField] PhysicsEvents physicsEvents;
 
 
     public void BaseInit()
@@ -51,14 +44,14 @@ public class BasePlayerController : MonoBehaviour
 
     void Movement()
     {
-        Vector3 input = MovementDirection(movementInformation.currentMovementVector.x, movementInformation.currentMovementVector.y);
+        Vector3 input = ConvertMovementDirection(movementInformation.currentMovementVector.x, movementInformation.currentMovementVector.y);
         movementInformation.rb.MovePosition(transform.position + input * Time.deltaTime * movementSpeed);
     }
 
     void Raycast()
     {
         //Checks if the game is paused before running to save performance
-        if (GlobalHelper.IsPaused() != true)
+        if (GlobalHelper.IsPaused() != true && raycastInformation.raycastPoint != null)
         {
             // The raycast
             RaycastHit hit;
@@ -91,8 +84,12 @@ public class BasePlayerController : MonoBehaviour
     public void CallUpdate()
     {
         Raycast();
-        Movement();
         movementInformation.CheckEvents();
+    }
+
+    public void CallFixedUpdate()
+    {
+        Movement();
     }
 
     internal Interactable GetRaycastInteractable()
@@ -110,16 +107,17 @@ public class BasePlayerController : MonoBehaviour
         currentMinigameStats = stats;
     }
 
-    public void UpdateMovement(InputAction.CallbackContext context)
+    public void UpdateMovementInput(InputAction.CallbackContext context)
     {
         movementInformation.currentMovementVector = context.ReadValue<Vector2>();
     }
 
-    Vector3 MovementDirection(float xValue,  float yValue)
+    Vector3 ConvertMovementDirection(float xValue,  float yValue, Transform swag = null)
     {
         float x = 0;
         float y = 0;
         float z = 0;
+
         switch (movementPreset.GetHorizontalAxis())
         {
             case PlayerMovementPresets.MoveAxis.x:
@@ -132,6 +130,12 @@ public class BasePlayerController : MonoBehaviour
                 z = xValue;
                 break;
             case PlayerMovementPresets.MoveAxis.cameraRelativeHorizontal:
+
+                if (swag != null)
+                {
+
+                }
+
                 break;
             case PlayerMovementPresets.MoveAxis.cameraRelativeForward:
                 break;
@@ -257,6 +261,8 @@ public class RaycastInformation
 
     [Header("Debug")]
     public Color debugColour;
+
+    
 }
 
 [System.Serializable]
