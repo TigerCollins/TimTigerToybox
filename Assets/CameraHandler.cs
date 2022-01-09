@@ -22,6 +22,10 @@ public class CameraHandler : MonoBehaviour
         CamStateSwitch(defaultPerspective);
     }
 
+    public Camera GetPlayerCamera()
+    {
+        return playerCam;
+    }
 
     public void CamStateSwitch(GlobalHelper.Perspective perspective)
     {

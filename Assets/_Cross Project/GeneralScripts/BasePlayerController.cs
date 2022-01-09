@@ -117,7 +117,7 @@ public class BasePlayerController : MonoBehaviour
         float x = 0;
         float y = 0;
         float z = 0;
-
+        Vector3 newVector = new Vector3(x, y, z);
         switch (movementPreset.GetHorizontalAxis())
         {
             case PlayerMovementPresets.MoveAxis.x:
@@ -130,11 +130,8 @@ public class BasePlayerController : MonoBehaviour
                 z = xValue;
                 break;
             case PlayerMovementPresets.MoveAxis.cameraRelativeHorizontal:
-
-                if (swag != null)
-                {
-
-                }
+                newVector = new Vector3();
+               
 
                 break;
             case PlayerMovementPresets.MoveAxis.cameraRelativeForward:
@@ -158,6 +155,7 @@ public class BasePlayerController : MonoBehaviour
                 z = yValue;
                 break;
             case PlayerMovementPresets.MoveAxis.cameraRelativeHorizontal:
+
                 break;
             case PlayerMovementPresets.MoveAxis.cameraRelativeForward:
                 break;
@@ -169,21 +167,26 @@ public class BasePlayerController : MonoBehaviour
         return new Vector3(x,y,z);
     }
 
+
+    void AdjustRotation()
+    {
+
+    }
     public void SetMovementPreset(GlobalHelper.Perspective perspective)
     {
         switch (perspective)
         {
             case GlobalHelper.Perspective.firstPerson:
-                movementPreset = movementInformation.movementPresets.firstPerson;
+                movementPreset = MovementPresetHolder.instance.firstPerson;
                 break;
             case GlobalHelper.Perspective.thirdPerson:
-                movementPreset = movementInformation.movementPresets.thirdPerson;
+                movementPreset = MovementPresetHolder.instance.thirdPerson;
                 break;
             case GlobalHelper.Perspective.sideScroller:
-                movementPreset = movementInformation.movementPresets.sideScroller;
+                movementPreset = MovementPresetHolder.instance.sideScroller;
                 break;
             case GlobalHelper.Perspective.topDown:
-                movementPreset = movementInformation.movementPresets.topdown;
+                movementPreset = MovementPresetHolder.instance.topdown;
                 break;
             default:
                 break;
@@ -278,7 +281,6 @@ public class Movement
     public Rigidbody rb;
 
     [Space(10)]
-    public MovementPresets movementPresets;
     public MovementEvents events;
 
     public void CheckEvents()
@@ -321,14 +323,6 @@ public class MovementEvents
     public UnityEvent onTopDown;
 }
 
-[System.Serializable]
-public class MovementPresets
-{
-    public PlayerMovementPresets firstPerson;
-    public PlayerMovementPresets thirdPerson;
-    public PlayerMovementPresets sideScroller;
-    public PlayerMovementPresets topdown;
-}
 
 [System.Serializable]
 public class PhysicsEvents
