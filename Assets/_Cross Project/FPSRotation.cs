@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
+using UnityEngine.InputSystem;
 
-public class FPSRotation : MonoBehaviour
+public class FPSRotation : BaseCameraController
 {
     Vector2 _mouseAbsolute;
     Vector2 _smoothMouse;
@@ -22,8 +23,6 @@ public class FPSRotation : MonoBehaviour
     bool frozen;
 
     public bool IsFocusing => focusSubject != null;
-
-    internal Rigidbody player;
 
     internal void Init()
     {
@@ -79,6 +78,13 @@ public class FPSRotation : MonoBehaviour
     }
     */
 
+    private Vector2 mouseMove;
+
+    public void LookInput(InputAction.CallbackContext context)
+    {
+        mouseMove = context.ReadValue<Vector2>();
+    }
+
     private void PerformRotation()
     {
         // Allow the script to clamp based on a desired target value.
@@ -86,7 +92,7 @@ public class FPSRotation : MonoBehaviour
         var targetCharacterOrientation = Quaternion.Euler(targetCharacterDirection);
 
         // Get raw mouse input for a cleaner reading on more sensitive mice.
-        var mouseDelta = new Vector2(Input.GetAxisRaw("Mouse X"), invertY ? -Input.GetAxisRaw("Mouse Y") : Input.GetAxisRaw("Mouse Y"));
+        var mouseDelta = new Vector2(mouseMove.x, invertY ? -mouseMove.y : mouseMove.y);
 
         // Scale input against the sensitivity setting and multiply that against the smoothing value.
         mouseDelta = Vector2.Scale(mouseDelta, new Vector2(sensitivity * smoothing, sensitivity * smoothing));

@@ -1,8 +1,8 @@
-using System.Collections;
+using MoreMountains.Feedbacks;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
-using MoreMountains.Feedbacks;
+
 public class CameraHandler : MonoBehaviour
 {
     public static CameraHandler instance;
@@ -10,15 +10,14 @@ public class CameraHandler : MonoBehaviour
     [SerializeField] GlobalHelper.Perspective defaultPerspective;
     [SerializeField] Camera playerCam;
     [SerializeField] CameraPoints cameraPoints;
+    [SerializeField] CameraScripts cameraControllers;
     [SerializeField] Feels feelsDetails;
 
-    private void Start()
-    {
-        Init();
-    }
+    internal GameManager game;
 
     public void Init()
     {
+        cameraControllers.
         CamStateSwitch(defaultPerspective);
     }
 
@@ -100,11 +99,21 @@ public class Feels
 [System.Serializable]
 public class CameraScripts
 {
-   /* List<camScript> scripts;
 
-    public void EnableOnlyThisScript(camScript wantedScript)
+    List<BaseCameraController> script;
+
+    internal void Init(GameManager game)
     {
-        foreach (camScript item in scripts)
+        foreach (BaseCameraController item in script)
+        {
+            item.player = game.Player;
+            item.Init();
+        }
+    }
+
+    public void EnableOnlyThisScript(BaseCameraController wantedScript)
+    {
+        foreach (BaseCameraController item in script)
         {
             if(item != wantedScript)
             {
@@ -117,5 +126,4 @@ public class CameraScripts
             }
         }
     }
-   */
 }
